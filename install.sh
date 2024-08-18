@@ -1,0 +1,35 @@
+set -x
+_which_version_id ()
+{
+    lsb_release -a 2>/dev/null | grep Code | awk -F' ' '{print $2}' | tr -d '\n'
+}
+
+install_important_software()
+{
+    # coreutils: for realpath
+    base=( tree apt-file git ranger )
+    shell=( zsh )
+    editor=( vim neovim emacs )
+    connect=( openssh-server curl wget net-tools )
+    compiler=( clang llvm clangd gcc gdb make cmake java binutils )
+    search=( fd-find ripgrep fzf )
+    sudo apt-get install ${base[@]}\
+	    ${shell[@]} \
+	    ${editor[@]} \
+	    ${connect[@]} \
+	    ${compiler[@]} \
+	    ${search[@]}
+}
+
+main() {
+    echo "1. 正在替换ustc ubuntu镜像源文件"
+    sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak.$(date +%d%H%M%S)
+    sudo cp ustc/$(_which_version_id).sources.list /etc/apt/sources.list
+    sudo apt-get update
+
+    echo "2. 正在下载必要的软件"
+    install_important_softwares
+}
+
+main
+
