@@ -4,7 +4,7 @@ _which_version_id ()
     lsb_release -a 2>/dev/null | grep Code | awk -F' ' '{print $2}' | tr -d '\n'
 }
 
-install_important_software()
+install_important_softwares()
 {
     # coreutils: for realpath
     base=( tree apt-file git ranger )
@@ -12,7 +12,7 @@ install_important_software()
     editor=( vim neovim emacs )
     connect=( openssh-server curl wget net-tools )
     compiler=( clang llvm clangd gcc gdb make cmake java binutils )
-    search=( fd-find ripgrep fzf )
+    search=( fd-find ripgrep silversearcher-ag )
     sudo apt-get install ${base[@]}\
 	    ${shell[@]} \
 	    ${editor[@]} \
@@ -20,6 +20,7 @@ install_important_software()
 	    ${compiler[@]} \
 	    ${search[@]}
 }
+
 
 main() {
     echo "1. 正在替换ustc ubuntu镜像源文件"
