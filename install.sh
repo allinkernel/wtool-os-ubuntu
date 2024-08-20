@@ -11,7 +11,7 @@ install_important_softwares()
     shell=( zsh )
     editor=( vim neovim emacs )
     connect=( openssh-server curl wget net-tools )
-    compiler=( clang llvm clangd gcc gdb make cmake java binutils )
+    compiler=( clang llvm clangd gcc gdb make cmake binutils )
     search=( fd-find ripgrep silversearcher-ag )
     sudo apt-get install ${base[@]}\
 	    ${shell[@]} \
