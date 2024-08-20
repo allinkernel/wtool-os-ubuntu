@@ -13,7 +13,7 @@ install_important_softwares()
     connect=( openssh-server curl wget net-tools )
     compiler=( clang llvm clangd gcc gdb make cmake binutils )
     search=( fd-find ripgrep silversearcher-ag )
-    sudo apt-get install ${base[@]}\
+    sudo apt-get install -y ${base[@]}\
 	    ${shell[@]} \
 	    ${editor[@]} \
 	    ${connect[@]} \
