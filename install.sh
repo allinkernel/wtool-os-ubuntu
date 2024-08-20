@@ -26,7 +26,7 @@ main() {
     echo "1. 正在替换ustc ubuntu镜像源文件"
     sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak.$(date +%d%H%M%S)
     sudo cp ustc/$(_which_version_id).sources.list /etc/apt/sources.list
-    sudo apt-get update
+    echo y | sudo apt-get update
 
     echo "2. 正在下载必要的软件"
     install_important_softwares
