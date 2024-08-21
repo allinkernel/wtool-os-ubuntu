@@ -7,7 +7,7 @@ _which_version_id ()
 install_important_softwares()
 {
     # coreutils: for realpath
-    base=( tree apt-file git ranger )
+    base=( tree apt-file git ranger tmux )
     shell=( zsh )
     editor=( vim neovim emacs )
     connect=( openssh-server curl wget net-tools )
