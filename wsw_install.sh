@@ -9,9 +9,9 @@ install_important_softwares()
     # coreutils: for realpath
     base=( tree apt-file git ranger tmux )
     shell=( zsh )
-    editor=( vim neovim emacs )
+    editor=( vim neovim emacs dos2unix)
     connect=( openssh-server curl wget net-tools )
-    compiler=( clang llvm clangd gcc gdb make cmake binutils )
+    compiler=( clang llvm clangd gcc gdb make cmake binutils autoconf automake )
     search=( fd-find ripgrep silversearcher-ag )
     sudo apt-get install -y ${base[@]}\
 	    ${shell[@]} \
