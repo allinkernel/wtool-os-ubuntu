@@ -11,16 +11,16 @@ install_important_softwares()
     shell=( zsh )
     editor=( vim neovim emacs dos2unix)
     connect=( openssh-server curl wget net-tools )
-    compiler=( clang llvm clangd gcc gdb make cmake binutils autoconf automake build-essential flex bison)
+    compiler=( clang llvm clangd gcc gdb make cmake binutils autoconf automake build-essential flex bison nasm)
     libs=( libelf-dev libssl-dev )
     search=( fd-find ripgrep silversearcher-ag )
     sudo apt-get install -y ${base[@]}\
-	    ${shell[@]} \
-	    ${editor[@]} \
-	    ${connect[@]} \
-	    ${compiler[@]} \
-	    ${libs[@]} \
-	    ${search[@]}
+        ${shell[@]} \
+        ${editor[@]} \
+        ${connect[@]} \
+        ${compiler[@]} \
+        ${libs[@]} \
+        ${search[@]}
 }
 
 
