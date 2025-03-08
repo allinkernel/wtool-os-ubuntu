@@ -7,12 +7,14 @@ _which_version_id ()
 install_important_softwares()
 {
     # coreutils: for realpath
-    base=( tree apt-file git ranger tmux )
+    base=( tree apt-file git ranger tmux bat )
     shell=( zsh )
     editor=( vim neovim emacs dos2unix)
     connect=( openssh-server curl wget net-tools )
     compiler=( clang llvm clangd gcc gdb make cmake binutils autoconf automake build-essential flex bison nasm)
-    libs=( libelf-dev libssl-dev )
+    doctool=( assiidoc )
+    libs=( libelf-dev libssl-dev libcurl4-openssl-dev)
+    funny=( sl neofetch )
     search=( fd-find ripgrep silversearcher-ag )
     sudo apt-get install -y ${base[@]}\
         ${shell[@]} \
