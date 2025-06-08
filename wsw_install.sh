@@ -13,18 +13,19 @@ install_important_softwares()
     connect=( openssh-server curl wget net-tools )
     compiler=( clang llvm clangd gcc gdb make cmake binutils autoconf automake build-essential flex bison nasm texinfo )
     doctool=( assiidoc )
-    libs=( libelf-dev libssl-dev libcurl4-openssl-dev)
+    libs=( libelf-dev libssl-dev libcurl4-openssl-dev gcc-multilib libc6-dev-i386 )
     funny=( sl neofetch )
     search=( fd-find ripgrep silversearcher-ag )
+    graph=( graphviz )
     sudo apt-get install -y ${base[@]}\
         ${shell[@]} \
         ${editor[@]} \
         ${connect[@]} \
         ${compiler[@]} \
         ${libs[@]} \
-        ${search[@]}
+        ${search[@]} \
+        ${graph[@]} 
 }
-
 
 main() {
     echo "1. 正在替换ustc ubuntu镜像源文件"
