@@ -15,7 +15,7 @@ install_important_softwares()
     doctool=( assiidoc )
     libs=( libelf-dev libssl-dev libcurl4-openssl-dev gcc-multilib libc6-dev-i386 )
     funny=( sl neofetch )
-    search=( fd-find ripgrep silversearcher-ag )
+    search=( fzf fd-find ripgrep silversearcher-ag )
     graph=( graphviz )
     sudo apt-get install -y ${base[@]}\
         ${shell[@]} \
