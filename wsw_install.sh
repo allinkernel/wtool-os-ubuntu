@@ -28,12 +28,14 @@ install_important_softwares()
 }
 
 main() {
-    echo "1. 正在替换ustc ubuntu镜像源文件"
+    echo "${step}. 正在替换ustc ubuntu镜像源文件"
+    step=$((step + 1))
     sudo cp /etc/apt/sources.list /etc/apt/sources.list.bak.$(date +%d%H%M%S)
     sudo cp ustc/$(_which_version_id).sources.list /etc/apt/sources.list
     echo y | sudo apt-get update
 
-    echo "2. 正在下载必要的软件"
+    echo "${step}. 正在下载必要的软件"
+    step=$((step + 2))
     install_important_softwares
 }
 
