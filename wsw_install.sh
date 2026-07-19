@@ -9,7 +9,7 @@ install_important_softwares()
     # coreutils: for realpath
     base=( tree apt-file git ranger tmux bat )
     shell=( zsh )
-    editor=( vim neovim emacs dos2unix)
+    editor=( vim neovim emacs dos2unix )
     connect=( openssh-server curl wget net-tools )
     compiler=( clang llvm clangd gcc gdb make cmake binutils autoconf automake build-essential flex bison nasm texinfo )
     doctool=( assiidoc )
