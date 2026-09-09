@@ -1,0 +1,73 @@
+---
+# 迁移自 mytool/os/wsw_install.sh 的 apt 列表。
+#
+# 用法（由 wtool 引擎调用，不需要你手动跑）：
+#   wtool provision os/ubuntu --with-system
+#
+# 特点：
+#   * 幂等：ansible 的 package 模块会先检查再装，重复执行安全
+#   * 跨发行版：package 会自动选 apt / dnf / yum（这里只声明包名）
+#   * 需要 root：become: true
+- name: wtool 基础软件包
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: false
+
+  tasks:
+    - name: 安装基础软件包
+      ansible.builtin.package:
+        state: present
+        name:
+          # base
+          - tree
+          - apt-file
+          - git
+          - ranger
+          - tmux
+          - bat
+          # shell
+          - zsh
+          # editor
+          - vim
+          - neovim
+          - emacs
+          - dos2unix
+          # connect
+          - openssh-server
+          - curl
+          - wget
+          - net-tools
+          # compiler / toolchain
+          - clang
+          - llvm
+          - clangd
+          - gcc
+          - gdb
+          - make
+          - cmake
+          - binutils
+          - autoconf
+          - automake
+          - build-essential
+          - flex
+          - bison
+          - nasm
+          - texinfo
+          # libs
+          - libelf-dev
+          - libssl-dev
+          - libcurl4-openssl-dev
+          - gcc-multilib
+          - libc6-dev-i386
+          # funny
+          - sl
+          - neofetch
+          # search
+          - fd-find
+          - ripgrep
+          - silversearcher-ag
+          # graph
+          - graphviz
+      # 注：原脚本里的 assiidoc 是 asciidoc 的笔误，这里未包含；
+      #     需要的话自己加一行 asciidoc

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  迁移自 mytool/os（原 wsw_os_config）。新方案分两件事：
+
+  1. system-file kind="apt-mirror"：换源。
+     引擎读 /etc/os-release 自动识别发行版与 codename，生成 deb822 内容，
+     写到 /etc/apt/sources.list.d/ubuntu.sources；写前备份，卸载时自动还原。
+     （旧版是 10 个静态 sources.list 文件加手工 cp，已废弃）
+
+  2. provision（ansible）：装基础软件包。
+     幂等、可重跑，不进 install 的 journal（apt 包删掉即可，不需要回退）。
+
+  priority=5：最早执行，保证后面编译型项目有编译器和依赖。
+  需要 root：执行 provision 时带上 with-system 参数
+-->
+<wtool schema="1" id="os/ubuntu" priority="5">
+
+  <system-file kind="apt-mirror" mirror="ustc" dest="auto"
+               mode="replace" backup="true"
+               when="os:ubuntu"
+               desc="apt 源换成 USTC 镜像（deb822）"/>
+
+  <provision src="provision/packages.yaml" runner="ansible" marker="apt-base"
+             when="os:ubuntu" desc="基础软件包（编译器/工具链/常用工具）"/>
+
+</wtool>
