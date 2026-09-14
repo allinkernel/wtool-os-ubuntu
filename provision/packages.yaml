@@ -29,6 +29,10 @@
           - ranger
           - dos2unix
           - bat
+          # wtool publish 优先用它打包（多线程、压缩率比 gzip 好很多）。
+          # 没有它也不会出错，但资产名会变成 .tar.gz——引擎按输出扩展名
+          # 选压缩器，不会出现"名字叫 zst、内容其实是 gz"这种事。
+          - zstd
 
     - name: 2/7 shell 与终端
       ansible.builtin.package:
