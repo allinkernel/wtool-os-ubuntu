@@ -69,5 +69,4 @@
           - silversearcher-ag
           # graph
           - graphviz
-      # 注：原脚本里的 assiidoc 是 asciidoc 的笔误，这里未包含；
-      #     需要的话自己加一行 asciidoc
+          - asciidoc
