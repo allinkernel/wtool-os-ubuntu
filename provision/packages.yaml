@@ -1,72 +1,78 @@
 ---
-# 迁移自 mytool/os/wsw_install.sh 的 apt 列表。
+# wtool 基础软件包 —— 「让 shell 环境能跑起来」所需的那一批
+#
+# 迁移自 mytool/os/wsw_install.sh 的包列表，但做了两处改动：
+#   1. 按类别拆成多个 task —— 一个大 task 会静默好几分钟，看不见进度
+#   2. 重型工具链（clang/llvm/gcc/gdb/emacs + multilib 库）挪到 toolchain.yaml，
+#      只在设了 WTOOL_HEAVY=1 时才装（那部分 1GB+）
 #
 # 用法（由 wtool 引擎调用，不需要你手动跑）：
 #   wtool provision os/ubuntu --with-system
-#
-# 特点：
-#   * 幂等：ansible 的 package 模块会先检查再装，重复执行安全
-#   * 跨发行版：package 会自动选 apt / dnf / yum（这里只声明包名）
-#   * 需要 root：become: true
 - name: wtool 基础软件包
   hosts: localhost
   connection: local
   become: true
   gather_facts: false
 
+  # 容器/无人值守环境里必须设，否则 debconf 的交互提问会把 task 挂死
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
   tasks:
-    - name: 安装基础软件包
+    - name: 1/7 基础工具
       ansible.builtin.package:
         state: present
         name:
-          # base
           - tree
           - apt-file
           - git
           - ranger
-          - tmux
+          - dos2unix
           - bat
-          # shell
+
+    - name: 2/7 shell 与终端
+      ansible.builtin.package:
+        state: present
+        name:
           - zsh
-          # editor
+          - tmux
+
+    - name: 3/7 编辑器
+      ansible.builtin.package:
+        state: present
+        name:
           - vim
           - neovim
-          - emacs
-          - dos2unix
-          # connect
+
+    - name: 4/7 远程与网络工具
+      ansible.builtin.package:
+        state: present
+        name:
           - openssh-server
           - curl
           - wget
           - net-tools
-          # compiler / toolchain
-          - clang
-          - llvm
-          - clangd
-          - gcc
-          - gdb
+
+    - name: 5/7 搜索工具
+      ansible.builtin.package:
+        state: present
+        name:
+          - ripgrep
+          - fd-find
+          - silversearcher-ag
+
+    - name: 6/7 构建基础
+      ansible.builtin.package:
+        state: present
+        name:
           - make
           - cmake
           - binutils
-          - autoconf
-          - automake
-          - build-essential
-          - flex
-          - bison
-          - nasm
-          - texinfo
-          # libs
-          - libelf-dev
-          - libssl-dev
-          - libcurl4-openssl-dev
-          - gcc-multilib
-          - libc6-dev-i386
-          # funny
+
+    - name: 7/7 杂项与可视化
+      ansible.builtin.package:
+        state: present
+        name:
+          - graphviz
           - sl
           - neofetch
-          # search
-          - fd-find
-          - ripgrep
-          - silversearcher-ag
-          # graph
-          - graphviz
-          - asciidoc

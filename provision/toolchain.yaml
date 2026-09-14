@@ -1,0 +1,55 @@
+---
+# wtool 重型工具链 —— 只在设了 WTOOL_HEAVY=1 时才装
+#
+# 这些是原 mytool/os/wsw_install.sh 的 compiler / libs / emacs 部分。
+# 单独拆出来的原因：
+#   · 光是 clang + llvm 就 500MB+，再加 emacs/build-essential/multilib 库总共 1GB 以上
+#   · 装它们和"让 zsh、tmux、fzf、repo 辅助命令能用"没有关系
+#
+# 用法：
+#   WTOOL_HEAVY=1 wtool provision os/ubuntu --with-system
+#   容器里：
+#     docker run ... -e WTOOL_HEAVY=1 ubuntu:24.04 bash .../container-shell.sh
+- name: wtool 重型工具链
+  hosts: localhost
+  connection: local
+  become: true
+  gather_facts: false
+
+  environment:
+    DEBIAN_FRONTEND: noninteractive
+
+  tasks:
+    - name: 1/3 编译器与调试器
+      ansible.builtin.package:
+        state: present
+        name:
+          - clang
+          - llvm
+          - clangd
+          - gcc
+          - gdb
+          - autoconf
+          - automake
+          - build-essential
+          - flex
+          - bison
+          - nasm
+          - texinfo
+
+    - name: 2/3 开发库（含 32 位）
+      ansible.builtin.package:
+        state: present
+        name:
+          - libelf-dev
+          - libssl-dev
+          - libcurl4-openssl-dev
+          - gcc-multilib
+          - libc6-dev-i386
+
+    - name: 3/3 emacs
+      ansible.builtin.package:
+        state: present
+        name:
+          - emacs
+      # 注：原脚本里的 assiidoc 是 asciidoc 的笔误，未包含；需要就自己加 asciidoc

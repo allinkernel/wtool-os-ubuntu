@@ -20,7 +20,13 @@
                when="os:ubuntu"
                desc="apt 源换成 USTC 镜像（deb822）"/>
 
+  <!-- 基础包：让 shell 环境能跑起来（zsh/tmux/vim/ripgrep/常用工具） -->
   <provision src="provision/packages.yaml" runner="ansible" marker="apt-base"
-             when="os:ubuntu" desc="基础软件包（编译器/工具链/常用工具）"/>
+             when="os:ubuntu" desc="基础软件包（常用工具 + 搜索 + 构建基础）"/>
+
+  <!-- 重型工具链（clang/llvm/gcc/gdb/emacs，1GB+）：设 WTOOL_HEAVY=1 才装 -->
+  <provision src="provision/toolchain.yaml" runner="ansible" marker="apt-toolchain"
+             when="os:ubuntu,env:WTOOL_HEAVY"
+             desc="重型工具链（需要 WTOOL_HEAVY=1）"/>
 
 </wtool>
