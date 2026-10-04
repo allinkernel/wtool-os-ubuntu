@@ -13,7 +13,7 @@
   priority=5：最早执行，保证后面编译型项目有编译器和依赖。
   需要 root：执行 provision 时带上 with-system 参数
 -->
-<wtool schema="1" id="os/ubuntu" priority="5">
+<wtool schema="1" priority="5">
 
   <!-- 换源：mirror="auto" = **听 install.sh 的**。
        install.sh 第 0 步会测速、让你挑一个，并把选择记在 <state>/mirror.txt；
