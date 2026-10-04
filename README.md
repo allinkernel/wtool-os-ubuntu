@@ -20,6 +20,11 @@ Ubuntu 的**系统层**声明：换 apt 源 + 装基础软件包（可选再加�
 
 撤销：`wtool sudo-uninstall os/ubuntu`（见「六、可逆性」）。
 
+> ⚠️ **这一层会改 `/etc` 和装包**（要 root）—— 用户级规矩（2026-10-04）：
+> **只在容器里装 / 测**，本机（WSL）是临时的手工环境、wtool 调通之前不在本地落地；
+> **真机上跑 `wtool sudo-install os/ubuntu` 必须由用户明确同意**，助手不得自行跑。
+> 只想看计划就用 `--dry-run`（它不动系统，见「二、怎么跑」）。
+
 ## 功能说明
 
 ### 一、声明了什么
@@ -91,6 +96,33 @@ dedup	/etc/apt/sources.list.d/ubuntu.sources			no	apt 源（跟随 install.sh �
 支持的发行版：`ubuntu` / `debian`（deb822），以及 `rocky` / `centos` / `rhel` /
 `almalinux` / `fedora`（yum `.repo`）—— 但本项目的 `when="os:ubuntu"` 只在 Ubuntu 上跑。
 
+#### `mirror.txt` 的确切格式（写它的和读它的必须一致）
+
+`<state>/mirror.txt` 是 `install.sh` 与引擎之间的**接口**，一行、四列、**Tab 分隔**：
+
+```
+<代号>\t<主机名|->\t<来源>\t<时间>
+# 例：ustc	mirrors.ustc.edu.cn	install.sh	2026-10-04T13:20:01+0800
+#     official	-	install.sh	2026-10-04T13:20:01+0800
+```
+
+⚠️ **写它的是 `install.sh`，不要手写**（`bootstrap/scripts/install-env.sh:223`）。
+**第二列（主机名）才是引擎真正用的那列** —— 引擎拿 host 反查镜像代号：
+
+```sh
+T=$(mktemp -d); mkdir -p "$T/state" "$T/scratch"
+printf 'ustc\tmirrors.ustc.edu.cn\tinstall.sh\t2026-10-04T00:00:00+0800\n' > "$T/state/mirror.txt"
+python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
+  --home "$HOME" --state "$T/state" --scratch "$T/scratch" \
+  --os-id ubuntu --os-codename noble --arch x86_64
+cat "$T/scratch/sysfiles.tsv"     # 第一列 = dedup
+rm -rf "$T"
+```
+
+只写一行 `ustc`（没有主机名）会被当成"**没有记录**" → 动作退回 `replace`
+（我第一次核对时就踩了这个：README 原来没写格式，看起来像文档错了，其实是我的
+`mirror.txt` 写得不全）。
+
 ### 四、基础软件包（`provision/packages.yaml`）
 
 Ansible playbook，`become: true`、`DEBIAN_FRONTEND=noninteractive`，
@@ -106,8 +138,20 @@ Ansible playbook，`become: true`、`DEBIAN_FRONTEND=noninteractive`，
 | 6/7 构建基础 | `make` `cmake` `binutils` |
 | 7/7 杂项与可视化 | `graphviz` `sl` `neofetch` |
 
-用 `ansible.builtin.package` 模块（**幂等、可重跑**）。`zstd` 是给
-`wtool publish` 打包用的（没有它也能打包，只是资产变成 `.tar.gz`）。
+用 `ansible.builtin.package` 模块（**幂等、可重跑**）。
+
+> ⚠️ **关于 `zstd`：原文写错了，已订正（2026-10-04 核对）**。旧 README（`f56afcd` 写的）
+> 说"`zstd` 是给 `wtool publish` 打包用的（没有它也能打包，只是资产变成 `.tar.gz`）"——
+> 这句**已经过期**：
+>
+> * 命令名不是 `wtool publish` 了 —— 打包是 **`wtool pack-release`**，发布是 `publish-release`；
+> * 产物固定是 **`源码.zip` / `release.zip`**（`wtool_fs.sh` 的 `wt_zip_create` →
+>   `python3 wtool_zip.py create`），**不再按压缩器挑扩展名**；
+> * 判据：`grep -rn 'zstd' bootstrap/lib/wtool_fs.sh` 只剩一条
+>   `*.tar.zst) tar --zstd -xf ...`（解**旧版**包的兼容分支），没有一处用它打包。
+>
+> 所以 `zstd` 现在**对打包没有作用**（装了也不碍事）。要不要把它从
+> `provision/packages.yaml` 里删掉是用户的决定 —— 记在 `BACKLOG.md`「待拍板」。
 
 ### 五、重型工具链（`provision/toolchain.yaml`）
 
@@ -154,7 +198,11 @@ Ansible playbook，`become: true`、`DEBIAN_FRONTEND=noninteractive`，
 
 ```sh
 cd bootstrap/tests && sh provision_test.sh     # 40 条（sudo-install 层：系统文件 / source / task）
+                                               # 条数以脚本最后那行 PASS/FAIL 为准
 ```
+
+> 这个测试**安全**：文件头写着"全程在临时目录里跑，不碰真实 `$HOME`、不碰 `/etc`、
+> 不需要 root"。实测跑过一次：`PASS: 40   FAIL: 0`。
 
 其中**场景 9** 就是 `mirror="auto"` 跟随 `install.sh` 那条逻辑。
 
@@ -162,14 +210,26 @@ cd bootstrap/tests && sh provision_test.sh     # 40 条（sudo-install 层：系
 
 ```sh
 cd ~/self/wtool
+T=$(mktemp -d); mkdir -p "$T/state" "$T/scratch"
 python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
-  --home "$HOME" --state <临时状态目录> --scratch <临时目录> \
+  --home "$HOME" --state "$T/state" --scratch "$T/scratch" \
   --os-id ubuntu --os-codename noble --arch x86_64
-# 打印 "actions: N sysfile, N source, N task"，并把逐条计划写进 <scratch>/sysfiles.tsv、tasks.tsv
+cat "$T/scratch/sysfiles.tsv" "$T/scratch/tasks.tsv"
+rm -rf "$T"
 ```
 
-> ⚠️ **没有在真系统上跑过 `sudo-install`**（那要 sudo + root，本次改造只改文档）。
-> 上面那些结论来自读引擎代码 + `plan-provision` 的实跑输出，**不是端到端验证**。
+实测（2026-10-04）：
+
+| 情形 | 结果 |
+|---|---|
+| 没有 `mirror.txt`、没设 `WTOOL_HEAVY` | 警告 `when=os:ubuntu,env:WTOOL_HEAVY 不匹配，跳过任务`；`actions: 1 sysfile, 0 source, 1 task`；第一条是 `replace`（backup=yes） |
+| `mirror.txt` 记的是 `ustc` / `mirrors.ustc.edu.cn` | 警告"这台机器已经换过源…跳过换源，顺手清掉会重复的那份"；第一条变 `dedup` |
+| `mirror.txt` 记的是 `official` | 警告"install.sh 里选了官方源 → 跳过换源"；第一条 `dedup` |
+| `WTOOL_HEAVY=1` | `actions: 1 sysfile, 0 source, 2 task`（多一条 `apt-toolchain`） |
+
+> ⚠️ **没有在真系统上跑过 `sudo-install`**（那要 sudo + root，要改 `/etc`、要装包）。
+> 上面那些结论来自读引擎代码 + `plan-provision` 与 `provision_test.sh` 的实跑输出，
+> **不是端到端验证**。
 
 ## 与 mytool 版本的差异
 
@@ -185,7 +245,8 @@ python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
 
 > 原 `wsw_install.sh` 与 10 个静态源文件已删除（git 历史里仍有）。
 > 原 README 里提到的 `readme.md`、`install.sh` / `uninstall.sh` 存根
-> **现在都不在仓库里**（`git ls-files` 只有 `README.md`、`provision/*.yaml`、`wtool.xml`）。
+> **现在都不在仓库里**（`git ls-files` 只有 `AGENTS.md`、`README.md`、
+> `provision/packages.yaml`、`provision/toolchain.yaml`、`wtool.xml`）。
 
 ## 文件
 
@@ -194,3 +255,4 @@ python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
 | `wtool.xml` | 清单：3 条 `<sudo-install>`（换源 / 基础包 / 重型工具链） |
 | `provision/packages.yaml` | 基础软件包的 Ansible playbook（7 个 task，24 个包） |
 | `provision/toolchain.yaml` | 重型工具链（3 个 task，18 个包，要 `WTOOL_HEAVY=1`） |
+| `AGENTS.md` / `BACKLOG.md` | 助手看的规则 / 待办与待拍板 |

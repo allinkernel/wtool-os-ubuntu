@@ -49,6 +49,17 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
    `sudo-uninstall` 会 `apt-get remove`；**重型/体积大的包放 `toolchain.yaml`**
    （由 `WTOOL_HEAVY=1` 把关），不要塞进基础包。
 
+7. **装 / 测只在容器里做。** 这一层**会改 `/etc`、会装包**（要 root）——
+   本机（WSL）是临时的手工环境，wtool 调通之前不在本地落地；
+   **真机上跑 `wtool sudo-install os/ubuntu` 必须由用户明确同意**，
+   助手不得自行跑（用户级 `~/.dsh/AGENTS.md` 的硬规矩）。只看计划用 `--dry-run`。
+
+8. **引用引擎行为的结论必须带判据。** README 里凡是"引擎会怎样"的话
+   （打包格式、包名怎么试、警告原文……）都要附一条可复现命令 ——
+   `bootstrap/` 一直在改，**已经踩过**：README 里"`zstd` 是给 `wtool publish` 打包用的、
+   没有它资产会变成 `.tar.gz`"这段，在引擎改成 `pack-release` + `源码.zip`/`release.zip`
+   之后就变成了错话（2026-10-04 订正，见 `BACKLOG.md`「待拍板 1」）。
+
 ## README 章节结构（改了对应内容就改对应章节）
 
 | 章节 | 内容 |
@@ -71,7 +82,11 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
 
 ```sh
 cd bootstrap/tests && sh provision_test.sh     # 40 条（含场景 9：mirror="auto" 跟随 install.sh）
+                                               # 条数以脚本最后那行 PASS/FAIL 为准
 ```
+
+这个测试**安全**（文件头写着：全程临时目录、不碰真 `$HOME`、不碰 `/etc`、不要 root）；
+2026-10-04 实测 `PASS: 40  FAIL: 0`。
 
 想验**本项目的清单**（只算不写、不动系统、不用 sudo）：
 
@@ -87,7 +102,9 @@ rm -rf "$T"
 
 预期：没设 `WTOOL_HEAVY` 时 `actions: 1 sysfile, 0 source, 1 task`（toolchain 被
 `when=` 挡掉）；`WTOOL_HEAVY=1` 时是 `2 task`。`state` 目录里有 `mirror.txt`
-（记着已知镜像）时，第一条的动作应变成 `dedup`。
+时，第一条的动作应变成 `dedup` —— ⚠️ **`mirror.txt` 必须是四列 Tab 分隔**
+（`<代号>\t<主机名|->\t<来源>\t<时间>`），**引擎用第二列主机名反查代号**；
+只写一行 `ustc` 会被当成"没记录"、动作退回 `replace`（README「三」里有判据与例子）。
 
 **绝不要为了"测一下"就在真机器上跑 `wtool sudo-install os/ubuntu`** ——
 那会改 `/etc` 和装包。`--dry-run` 是安全的。
