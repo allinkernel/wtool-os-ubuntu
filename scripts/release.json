@@ -1,0 +1,50 @@
+{
+  "schema": 1,
+  "project": "os/ubuntu",
+  "repo": "allinkernel/wtool-os-ubuntu",
+  "tag": "ds_dev-2026-10-07",
+  "base_url": "https://github.com/allinkernel/wtool-os-ubuntu/releases/download/ds_dev-2026-10-07",
+  "commit": "12fc637c0b4ad08adab89f091fdbc95c5495e9ae",
+  "packed_at": "2026-10-08T01:05:02+0800",
+  "published_at": "2026-10-08T01:06:36+08:00",
+  "wtool_engine": "1.0.0",
+  "dirty": false,
+  "volume_size": "32M",
+  "declare": [
+    "wtool.xml"
+  ],
+  "targets": [],
+  "assets": [
+    {
+      "name": "dist.json",
+      "role": "",
+      "bytes": 891,
+      "sha256": "0d34e61eea19319b5d6c5bc006ac86942c4c39473e54d6bce04b47fac820a574"
+    },
+    {
+      "name": "release-hash.txt",
+      "role": "",
+      "bytes": 78,
+      "sha256": "901d75f1711173291e7bae2f2fbda01e8a976932a034771c82ff90c65095c3d6"
+    },
+    {
+      "name": "release.zip",
+      "role": "release",
+      "bytes": 1350,
+      "sha256": "e5a154d5b5ab5076309fde6f9de4aa610206d4b96eb9415c90de497c6d981c75"
+    },
+    {
+      "name": "源码-hash.txt",
+      "role": "",
+      "bytes": 77,
+      "sha256": "52acca0ccbe90f6921de8b83f13b2ae524b26137a799606fdd5462c2de256e02"
+    },
+    {
+      "name": "源码.zip",
+      "role": "source",
+      "bytes": 17146,
+      "sha256": "dc8bf785b9c436e14427f756c9df66a694fa550040bbf3c32679e3067dd91198"
+    }
+  ],
+  "how": "wtool download-release os/ubuntu   # 下到项目的 __release/（按本文件的 sha256 校验）\nwtool unpack-release os/ubuntu     # 拼分卷 + 解到 __output/\nwtool install os/ubuntu            # 装到本机"
+}
