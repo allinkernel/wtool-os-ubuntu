@@ -145,8 +145,10 @@ Ansible playbook，`become: true`、`DEBIAN_FRONTEND=noninteractive`，
 > 这句**已经过期**：
 >
 > * 命令名不是 `wtool publish` 了 —— 打包是 **`wtool pack-release`**，发布是 `publish-release`；
-> * 产物固定是 **`源码.zip` / `release.zip`**（`wtool_fs.sh` 的 `wt_zip_create` →
+> * 产物固定是 **`source.zip` / `release.zip`**（`wtool_fs.sh` 的 `wt_zip_create` →
 >   `python3 wtool_zip.py create`），**不再按压缩器挑扩展名**；
+>   （2026-10-04 核对时源码包还叫 `源码.zip`；2026-10-09 起统一成 ASCII 名 `source.zip`
+>   —— GitHub 不接受非 ASCII 资产名，见 `harness/docs/adr/0040`）
 > * 判据：`grep -rn 'zstd' bootstrap/lib/wtool_fs.sh` 只剩一条
 >   `*.tar.zst) tar --zstd -xf ...`（解**旧版**包的兼容分支），没有一处用它打包。
 >

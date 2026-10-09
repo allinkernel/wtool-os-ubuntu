@@ -57,7 +57,8 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
 8. **引用引擎行为的结论必须带判据。** README 里凡是"引擎会怎样"的话
    （打包格式、包名怎么试、警告原文……）都要附一条可复现命令 ——
    `bootstrap/` 一直在改，**已经踩过**：README 里"`zstd` 是给 `wtool publish` 打包用的、
-   没有它资产会变成 `.tar.gz`"这段，在引擎改成 `pack-release` + `源码.zip`/`release.zip`
+   没有它资产会变成 `.tar.gz`"这段，在引擎改成 `pack-release` + `source.zip`/`release.zip`
+   （当时还叫 `源码.zip`，2026-10-09 改 ASCII 名 —— ADR-0040）
    之后就变成了错话（2026-10-04 订正，见 `BACKLOG.md`「待拍板 1」）。
 
 ## README 章节结构（改了对应内容就改对应章节）

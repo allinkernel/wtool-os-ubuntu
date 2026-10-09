@@ -17,8 +17,9 @@
 但资产名会变成 `.tar.gz`"。**这两句现在都不成立**：
 
 - 引擎的打包是 `wtool pack-release`（发布是 `publish-release`），不再叫 `wtool publish`；
-- 产物固定是 `源码.zip` / `release.zip`（`bootstrap/lib/wtool_fs.sh` 的 `wt_zip_create`
-  → `python3 wtool_zip.py create`），**不再按压缩器挑扩展名**；
+- 产物固定是 `source.zip` / `release.zip`（`bootstrap/lib/wtool_fs.sh` 的 `wt_zip_create`
+  → `python3 wtool_zip.py create`），**不再按压缩器挑扩展名**
+  （2026-10-04 核对时源码包叫 `源码.zip`；2026-10-09 改成 ASCII 名 —— ADR-0040）；
 - 判据：`grep -rn 'zstd' bootstrap/lib/wtool_fs.sh` → 只有 `*.tar.zst) tar --zstd -xf ...`
   一条，那是 `unpack-release` 解**旧版包**的兼容分支，跟打包无关。
 
