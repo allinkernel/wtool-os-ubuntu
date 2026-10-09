@@ -2,11 +2,11 @@
   "schema": 1,
   "project": "os/ubuntu",
   "repo": "allinkernel/wtool-os-ubuntu",
-  "tag": "ds_dev-2026-10-07",
-  "base_url": "https://github.com/allinkernel/wtool-os-ubuntu/releases/download/ds_dev-2026-10-07",
-  "commit": "12fc637c0b4ad08adab89f091fdbc95c5495e9ae",
-  "packed_at": "2026-10-08T01:05:02+0800",
-  "published_at": "2026-10-08T01:06:36+08:00",
+  "tag": "ds_dev-2026-10-09",
+  "base_url": "https://github.com/allinkernel/wtool-os-ubuntu/releases/download/ds_dev-2026-10-09",
+  "commit": "b8987422f33a35fbd3a719a30cfc790372a9611f",
+  "packed_at": "2026-10-09T15:32:01+0800",
+  "published_at": "2026-10-09T15:34:07+08:00",
   "wtool_engine": "1.0.0",
   "dirty": false,
   "volume_size": "32M",
@@ -18,33 +18,21 @@
     {
       "name": "dist.json",
       "role": "",
-      "bytes": 891,
-      "sha256": "0d34e61eea19319b5d6c5bc006ac86942c4c39473e54d6bce04b47fac820a574"
+      "bytes": 827,
+      "sha256": "6a183f2343e625b78165f2408eb8861646a23ea00fb6f38f5e6b4450ed3c30aa"
     },
     {
-      "name": "release-hash.txt",
-      "role": "",
-      "bytes": 78,
-      "sha256": "901d75f1711173291e7bae2f2fbda01e8a976932a034771c82ff90c65095c3d6"
-    },
-    {
-      "name": "release.zip",
-      "role": "release",
-      "bytes": 1350,
-      "sha256": "e5a154d5b5ab5076309fde6f9de4aa610206d4b96eb9415c90de497c6d981c75"
-    },
-    {
-      "name": "源码-hash.txt",
+      "name": "source-hash.txt",
       "role": "",
       "bytes": 77,
-      "sha256": "52acca0ccbe90f6921de8b83f13b2ae524b26137a799606fdd5462c2de256e02"
+      "sha256": "380a56d5d7beee7eea1acd7e4fbe69e524035f17e6abdd30023f41a86332df1a"
     },
     {
-      "name": "源码.zip",
+      "name": "source.zip",
       "role": "source",
-      "bytes": 17146,
-      "sha256": "dc8bf785b9c436e14427f756c9df66a694fa550040bbf3c32679e3067dd91198"
+      "bytes": 18680,
+      "sha256": "bf41a1688ad10461852872306badd0f58036dbf3174eab68304f74741ba78aab"
     }
   ],
-  "how": "wtool download-release os/ubuntu   # 下到项目的 __release/（按本文件的 sha256 校验）\nwtool unpack-release os/ubuntu     # 拼分卷 + 解到 __output/\nwtool install os/ubuntu            # 装到本机"
+  "how": "wtool download-release os/ubuntu   # 下到项目的 __release/（按本文件的 sha256 校验）\nwtool unpack-release os/ubuntu     # 拼分卷 + 把源码铺回项目目录\nwtool install os/ubuntu            # 装到本机"
 }
