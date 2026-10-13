@@ -13,7 +13,7 @@ Ubuntu 的**系统层**声明：换 apt 源 + 装基础软件包（可选再加�
 
 下载与安装的**唯一入口**在 GitHub 上：
 
-> **[wtool-base/README.md](https://github.com/allinkernel/wtool/blob/main/README.md)**
+> **[wtool-doc/README.md](https://github.com/allinkernel/wtool-doc/blob/main/README.md)**
 
 （URL 由清单 `.repo/manifests/default.xml` 里的 remote `ssh://git@github.com/`
 + 项目名 `allinkernel/wtool-os-ubuntu.git` + 默认 revision `main` 拼出，不是猜的。）
@@ -106,13 +106,13 @@ dedup	/etc/apt/sources.list.d/ubuntu.sources			no	apt 源（跟随 install.sh �
 #     official	-	install.sh	2026-10-04T13:20:01+0800
 ```
 
-⚠️ **写它的是 `install.sh`，不要手写**（`bootstrap/scripts/install-env.sh:223`）。
+⚠️ **写它的是 `install.sh`，不要手写**（`wtool-base-tools/scripts/install-env.sh:223`）。
 **第二列（主机名）才是引擎真正用的那列** —— 引擎拿 host 反查镜像代号：
 
 ```sh
 T=$(mktemp -d); mkdir -p "$T/state" "$T/scratch"
 printf 'ustc\tmirrors.ustc.edu.cn\tinstall.sh\t2026-10-04T00:00:00+0800\n' > "$T/state/mirror.txt"
-python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
+python3 wtool-base-tools/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
   --home "$HOME" --state "$T/state" --scratch "$T/scratch" \
   --os-id ubuntu --os-codename noble --arch x86_64
 cat "$T/scratch/sysfiles.tsv"     # 第一列 = dedup
@@ -149,7 +149,7 @@ Ansible playbook，`become: true`、`DEBIAN_FRONTEND=noninteractive`，
 >   `python3 wtool_zip.py create`），**不再按压缩器挑扩展名**；
 >   （2026-10-04 核对时源码包还叫 `源码.zip`；2026-10-09 起统一成 ASCII 名 `source.zip`
 >   —— GitHub 不接受非 ASCII 资产名，见 `harness/docs/adr/0040`）
-> * 判据：`grep -rn 'zstd' bootstrap/lib/wtool_fs.sh` 只剩一条
+> * 判据：`grep -rn 'zstd' wtool-base-tools/lib/wtool_fs.sh` 只剩一条
 >   `*.tar.zst) tar --zstd -xf ...`（解**旧版**包的兼容分支），没有一处用它打包。
 >
 > 所以 `zstd` 现在**对打包没有作用**（装了也不碍事）。要不要把它从
@@ -199,7 +199,7 @@ Ansible playbook，`become: true`、`DEBIAN_FRONTEND=noninteractive`，
 这个项目**自己没有测试脚本** —— 它是一份声明，测的是**引擎的 `sudo-install` 层**：
 
 ```sh
-cd bootstrap/tests && sh provision_test.sh     # 40 条（sudo-install 层：系统文件 / source / task）
+cd wtool-base-tools/tests && sh provision_test.sh     # 40 条（sudo-install 层：系统文件 / source / task）
                                                # 条数以脚本最后那行 PASS/FAIL 为准
 ```
 
@@ -213,7 +213,7 @@ cd bootstrap/tests && sh provision_test.sh     # 40 条（sudo-install 层：系
 ```sh
 cd ~/self/wtool
 T=$(mktemp -d); mkdir -p "$T/state" "$T/scratch"
-python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
+python3 wtool-base-tools/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
   --home "$HOME" --state "$T/state" --scratch "$T/scratch" \
   --os-id ubuntu --os-codename noble --arch x86_64
 cat "$T/scratch/sysfiles.tsv" "$T/scratch/tasks.tsv"

@@ -32,7 +32,7 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
 
 2. **README 里不写安装脚本的跑法。** 安装只有一句话
    （`wtool sudo-install os/ubuntu`，要 sudo）+ 一个链接到全局唯一下载/安装入口
-   （GitHub 上 `wtool-base/README.md`）。
+   （GitHub 上 `wtool-doc/README.md`）。
 
 3. **只用 `<sudo-install>`，不要用旧标签。** `<system-file>` / `<provision>` 已被
    它并掉（引擎仍认但每次解析都警告）。改清单时别把它们写回来。
@@ -56,7 +56,7 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
 
 8. **引用引擎行为的结论必须带判据。** README 里凡是"引擎会怎样"的话
    （打包格式、包名怎么试、警告原文……）都要附一条可复现命令 ——
-   `bootstrap/` 一直在改，**已经踩过**：README 里"`zstd` 是给 `wtool publish` 打包用的、
+   `wtool-base-tools/` 一直在改，**已经踩过**：README 里"`zstd` 是给 `wtool publish` 打包用的、
    没有它资产会变成 `.tar.gz`"这段，在引擎改成 `pack-release` + `source.zip`/`release.zip`
    （当时还叫 `源码.zip`，2026-10-09 改 ASCII 名 —— ADR-0040）
    之后就变成了错话（2026-10-04 订正，见 `BACKLOG.md`「待拍板 1」）。
@@ -66,7 +66,7 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
 | 章节 | 内容 |
 |---|---|
 | （开头） | 一句话 + "全是声明式、没有装包脚本" + 要 sudo |
-| `## 安装` | 一句话（`wtool sudo-install os/ubuntu`）+ wtool-base 链接 |
+| `## 安装` | 一句话（`wtool sudo-install os/ubuntu`）+ wtool-doc 链接 |
 | `## 功能说明` → `一、声明了什么` | 三条 `<sudo-install>` 的表 + `priority=5` / 旧标签说明 |
 | `## 功能说明` → `二、怎么跑` | `sudo-install` / `sudo-uninstall` / `sudo-bootstrap` / `--dry-run` / `WTOOL_HEAVY=1` |
 | `## 功能说明` → `三、apt 源` | `mirror="auto"` 三种情形（实测输出）+ 镜像表 + deb822 + 目标文件 |
@@ -82,7 +82,7 @@ README 里**不要**再写出"怎么跑项目自己的 install.sh"。
 这个项目**没有自己的测试脚本**，测的是**引擎的 `sudo-install` 层**：
 
 ```sh
-cd bootstrap/tests && sh provision_test.sh     # 40 条（含场景 9：mirror="auto" 跟随 install.sh）
+cd wtool-base-tools/tests && sh provision_test.sh     # 40 条（含场景 9：mirror="auto" 跟随 install.sh）
                                                # 条数以脚本最后那行 PASS/FAIL 为准
 ```
 
@@ -94,7 +94,7 @@ cd bootstrap/tests && sh provision_test.sh     # 40 条（含场景 9：mirror="
 ```sh
 cd ~/self/wtool
 T=$(mktemp -d); mkdir -p "$T/state" "$T/scratch"
-python3 bootstrap/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
+python3 wtool-base-tools/lib/wtool_plan.py plan-provision "$PWD/os/ubuntu" \
   --home "$HOME" --state "$T/state" --scratch "$T/scratch" \
   --os-id ubuntu --os-codename noble --arch x86_64
 cat "$T/scratch/sysfiles.tsv" "$T/scratch/tasks.tsv"
